@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Entities\" />
     <Folder Include="Enum\" />
     <Folder Include="Interfaces\" />
     <Folder Include="DTOs\" />
