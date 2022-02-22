@@ -9,6 +9,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialMedia.Core", "SocialM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialMedia.Infrastrucuture", "SocialMedia.Infrastrucuture\SocialMedia.Infrastrucuture.csproj", "{EC6706E5-F009-4137-8788-E57B78A90241}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A1ECEB3D-5AFD-45CC-9F27-EC5DA8BF658F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialMedia.UnitTests", "SocialMedia.UnitTests\SocialMedia.UnitTests.csproj", "{04511FA9-A963-4453-9719-2936DDC1C87A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialMedia.IntegrationTests", "SocialMedia.IntegrationTests\SocialMedia.IntegrationTests.csproj", "{F560D60F-632F-4433-BF9C-B28712F44CEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,9 +33,21 @@ Global
 		{EC6706E5-F009-4137-8788-E57B78A90241}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC6706E5-F009-4137-8788-E57B78A90241}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC6706E5-F009-4137-8788-E57B78A90241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04511FA9-A963-4453-9719-2936DDC1C87A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04511FA9-A963-4453-9719-2936DDC1C87A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04511FA9-A963-4453-9719-2936DDC1C87A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04511FA9-A963-4453-9719-2936DDC1C87A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F560D60F-632F-4433-BF9C-B28712F44CEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F560D60F-632F-4433-BF9C-B28712F44CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F560D60F-632F-4433-BF9C-B28712F44CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F560D60F-632F-4433-BF9C-B28712F44CEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{04511FA9-A963-4453-9719-2936DDC1C87A} = {A1ECEB3D-5AFD-45CC-9F27-EC5DA8BF658F}
+		{F560D60F-632F-4433-BF9C-B28712F44CEB} = {A1ECEB3D-5AFD-45CC-9F27-EC5DA8BF658F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {803D7A53-2B84-474B-9B73-F754A3CD27E3}
