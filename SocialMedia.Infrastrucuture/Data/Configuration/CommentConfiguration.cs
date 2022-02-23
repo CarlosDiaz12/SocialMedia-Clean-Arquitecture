@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
+using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
 
 namespace SocialMedia.Infrastrucuture.Data.Configuration
 {
-    public class CommentConfiguration : IEntityTypeConfiguration<Comment>
+    public class CommentConfiguration : ICommentConfiguration
     {
         public void Configure(EntityTypeBuilder<Comment> builder)
         {

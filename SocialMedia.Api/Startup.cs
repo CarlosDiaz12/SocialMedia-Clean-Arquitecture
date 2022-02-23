@@ -1,13 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastrucuture.Data;
+using SocialMedia.Infrastrucuture.Data.Configuration;
+using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
 using SocialMedia.Infrastrucuture.Repositories;
-using Newtonsoft.Json;
+
 namespace SocialMedia.Api
 {
     public class Startup
@@ -26,8 +28,12 @@ namespace SocialMedia.Api
                 .AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
             // DEPENDENCIAS
-            services.AddDbContext<SocialMediaContext>(opts => 
-                            opts.UseSqlServer(Configuration.GetConnectionString("SocialMediaDB")));
+
+            // mapper
+            services.AddTransient<IUserConfiguration, UserConfiguration>();
+            // db context
+            services.AddDbContext<SocialMediaContext>();
+            // repositories
             services.AddTransient<IPostRepository, PostRepository>();
         }
 
