@@ -18,9 +18,9 @@ namespace SocialMedia.Infrastrucuture.Repositories
             _context = context;
         }
 
-        public async Task<Post> GetPostsByUserId(int Id)
+        public async Task<Post> GetPostById(int Id)
         {
-            var post = await _context.Posts.FirstOrDefaultAsync(p => p.UserId == Id);
+            var post = await _context.Posts.FirstOrDefaultAsync(p => p.PostId == Id);
             return post;
         }
         public async Task<IEnumerable<Post>> GetPosts()
