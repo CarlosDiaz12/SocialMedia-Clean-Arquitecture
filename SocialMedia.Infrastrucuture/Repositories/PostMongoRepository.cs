@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SocialMedia.Infrastrucuture.Repositories
 {
-    public class PostRepository: IPostRepository
+    public class PostMongoRepository : IPostRepository
     {
         public async Task<IEnumerable<Post>> GetPosts()
         {
@@ -17,7 +17,7 @@ namespace SocialMedia.Infrastrucuture.Repositories
                 {
                     PostId = x,
                     userId = x,
-                    Description = $"Description {x}",
+                    Description = $"Description {x} Mongo",
                     Date = DateTime.Now,
                     ImageUrl = $"https://misapis.com/{x}"
                 });
