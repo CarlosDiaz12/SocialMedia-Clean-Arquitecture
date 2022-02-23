@@ -2,10 +2,7 @@
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastrucuture.Data;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Infrastrucuture.Repositories
@@ -27,6 +24,12 @@ namespace SocialMedia.Infrastrucuture.Repositories
         {
             var posts = await _context.Posts.ToListAsync();
             return posts;
+        }
+
+        public async Task InsertPost(Post post)
+        {
+            await _context.Posts.AddAsync(post);
+            await _context.SaveChangesAsync();
         }
     }
 }

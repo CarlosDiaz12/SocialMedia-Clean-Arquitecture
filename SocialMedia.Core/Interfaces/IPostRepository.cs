@@ -1,7 +1,5 @@
 ﻿using SocialMedia.Core.Entities;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Core.Interfaces
@@ -10,5 +8,6 @@ namespace SocialMedia.Core.Interfaces
     {
         Task<IEnumerable<Post>> GetPosts();
         Task<Post> GetPostById(int Id);
+        Task InsertPost(Post post);
     }
 }
