@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ using SocialMedia.Infrastrucuture.Data;
 using SocialMedia.Infrastrucuture.Data.Configuration;
 using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
 using SocialMedia.Infrastrucuture.Repositories;
+using System;
 
 namespace SocialMedia.Api
 {
@@ -24,6 +26,9 @@ namespace SocialMedia.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // configure AutoMapper to find automapper profiles
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
             // configure json reference loop
             services.AddControllers()
                 .AddNewtonsoftJson(x => {
