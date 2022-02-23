@@ -20,5 +20,12 @@ namespace SocialMedia.Api.Controllers
             var posts = await _postRepository.GetPosts();
             return Ok(posts);
         }
+
+        [HttpGet, Route("{userId}")]
+        public async Task<IActionResult> GetPostsByUserId(int userId)
+        {
+            var post = await _postRepository.GetPostsByUserId(userId);
+            return Ok(post);
+        }
     }
 }
