@@ -9,6 +9,7 @@ using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastrucuture.Data;
 using SocialMedia.Infrastrucuture.Data.Configuration;
 using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
+using SocialMedia.Infrastrucuture.Filters;
 using SocialMedia.Infrastrucuture.Repositories;
 using System;
 
@@ -33,6 +34,10 @@ namespace SocialMedia.Api
             services.AddControllers()
                 .AddNewtonsoftJson(x => {
                     x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                })
+                .ConfigureApiBehaviorOptions(opts => {
+                    // configurar opciones de API Attribute / remover validacion de modelo antes de entrar al action
+                    opts.SuppressModelStateInvalidFilter = true;
                 });
 
             // DEPENDENCIAS
@@ -41,10 +46,21 @@ namespace SocialMedia.Api
             services.AddTransient<IUserConfiguration, UserConfiguration>();
             services.AddTransient<ICommentConfiguration, CommentConfiguration>();
             services.AddTransient<IPostConfiguration, PostConfiguration>();
+
             // db context
             services.AddDbContext<SocialMediaContext>();
+
             // repositories
             services.AddTransient<IPostRepository, PostRepository>();
+
+            // Configurar middleware global
+            services.AddMvcCore(opts =>
+            {
+                opts.Filters.Add(typeof(ValidationFilter));
+                /* tambien asi
+                opts.Filters.Add<ValidationFilter>();
+                */
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
