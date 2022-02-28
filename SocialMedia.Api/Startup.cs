@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +38,7 @@ namespace SocialMedia.Api
                 })
                 .ConfigureApiBehaviorOptions(opts => {
                     // configurar opciones de API Attribute / remover validacion de modelo antes de entrar al action
-                    opts.SuppressModelStateInvalidFilter = true;
+                    // opts.SuppressModelStateInvalidFilter = true;
                 });
 
             // DEPENDENCIAS
@@ -60,7 +61,11 @@ namespace SocialMedia.Api
                 /* tambien asi
                 opts.Filters.Add<ValidationFilter>();
                 */
-            });
+            })
+                .AddFluentValidation( opts => {
+                    // REGISTRAR LOS ASSEMBLIES DONDE SE ENCUENTRAN LOS VALIDATORS
+                    opts.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
