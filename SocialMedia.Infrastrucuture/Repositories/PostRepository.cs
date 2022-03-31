@@ -31,5 +31,21 @@ namespace SocialMedia.Infrastrucuture.Repositories
             await _context.Posts.AddAsync(post);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<bool> UpdatePost(Post post)
+        {
+            _context.Attach(post);
+            _context.Entry(post).State = EntityState.Modified;
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
+
+        public async Task<bool> DeletePost(int Id)
+        {
+            var currentPost = await GetPostById(Id);
+            _context.Entry(currentPost).State = EntityState.Deleted;
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
+        }
     }
 }
