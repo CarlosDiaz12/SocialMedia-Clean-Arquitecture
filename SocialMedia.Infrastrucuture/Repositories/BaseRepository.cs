@@ -13,7 +13,7 @@ namespace SocialMedia.Infrastrucuture.Repositories
 {
     public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
-        private readonly SocialMediaContext _dbContext;
+        protected readonly SocialMediaContext _dbContext;
         private readonly DbSet<TEntity> _dbSet;
         public BaseRepository(SocialMediaContext dbContext)
         {

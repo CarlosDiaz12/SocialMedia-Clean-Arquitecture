@@ -13,7 +13,7 @@ namespace SocialMedia.Infrastrucuture.Repositories
         private readonly SocialMediaContext _context;
         public UnitOfWork(
             SocialMediaContext context,
-            IRepository<Post> postRepository,
+            IPostRepository postRepository,
             IRepository<User> userRepository,
             IRepository<Comment> commentRepository)
         {
@@ -22,7 +22,7 @@ namespace SocialMedia.Infrastrucuture.Repositories
             UserRepository = userRepository;
             CommentRepository = commentRepository;
         }
-        public IRepository<Post> PostRepository { get; }
+        public IPostRepository PostRepository { get; }
 
         public IRepository<User> UserRepository { get; }
 

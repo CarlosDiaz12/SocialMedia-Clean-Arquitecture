@@ -1,4 +1,5 @@
 ﻿using SocialMedia.Core.Entities;
+using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -32,18 +33,19 @@ namespace SocialMedia.Core.Services
         {
             var user = await _unitOfWork.UserRepository.GetById(post.UserId);
             if (user == null)
-                throw new Exception("User is not valid.");
+                throw new BusinessException("User is not valid.");
 
             if (post.Description.ToUpper().Contains("SEXO"))
-                throw new Exception("Post description is not allowed.");
+                throw new BusinessException("Post description is not allowed.");
 
-            var userPosts = await _unitOfWork.PostRepository.GetAll(x => x.UserId == post.UserId);
+            var userPosts = await _unitOfWork.PostRepository.GetPostsByUserId(post.UserId);
+
             if(userPosts.Count() > 0 && userPosts.Count() < 10)
             {
-                var lastPost = userPosts.LastOrDefault();
-                if(lastPost != null)
+                var lastPost = userPosts.OrderBy(x => x.Date).Last();
+                if((DateTime.Now - lastPost.Date).TotalDays < 7)
                 {
-                    if()
+                    throw new BusinessException("User can not publish.");
                 }
             }
 

@@ -52,8 +52,13 @@ namespace SocialMedia.Api
             // db context
             services.AddDbContext<SocialMediaContext>();
 
-            // repositories and services
+            /* repositories and services */
+
+            // post
             services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IPostRepository, PostRepository>();
+
+            // generic
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
@@ -61,6 +66,7 @@ namespace SocialMedia.Api
             services.AddMvcCore(opts =>
             {
                 opts.Filters.Add(typeof(ValidationFilter));
+                opts.Filters.Add(typeof(GlobalExceptionFilter));
                 /* tambien asi
                 opts.Filters.Add<ValidationFilter>();
                 */
