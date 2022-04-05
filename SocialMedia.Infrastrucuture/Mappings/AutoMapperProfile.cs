@@ -8,8 +8,10 @@ namespace SocialMedia.Infrastrucuture.Mappings
     {
         public AutoMapperProfile()
         {
-            CreateMap<Post, PostDto>();
-            CreateMap<PostDto, Post>();
+            CreateMap<Post, PostDto>()
+                .ForMember(a => a.PostId, b => b.MapFrom(p => p.Id));
+            CreateMap<PostDto, Post>()
+                .ForMember(a => a.Id, b => b.MapFrom(p => p.PostId));
         }
     }
 }

@@ -8,44 +8,42 @@ namespace SocialMedia.Core.Services
 {
     public class PostService : IPostService
     {
-        private readonly IPostRepository _postRepository;
-        private readonly IUserRepository _userRepository;
-        public PostService(IPostRepository postRepository, IUserRepository userRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public PostService(IUnitOfWork unitOfWork)
         {
-            _postRepository = postRepository;
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
-        public Task<bool> DeletePost(int Id)
+        public Task DeletePost(int Id)
         {
-            return _postRepository.DeletePost(Id);
+            return _unitOfWork.PostRepository.Delete(Id);
         }
 
         public Task<Post> GetPostById(int Id)
         {
-            return _postRepository.GetPostById(Id);
+            return _unitOfWork.PostRepository.GetById(Id);
         }
 
         public Task<IEnumerable<Post>> GetPosts()
         {
-            return _postRepository.GetPosts();
+            return _unitOfWork.PostRepository.GetAll();
         }
 
         public async Task InsertPost(Post post)
         {
-            var user = await _userRepository.GetUserById(post.UserId);
+            var user = await _unitOfWork.UserRepository.GetById(post.UserId);
             if (user == null)
                 throw new Exception("User is not valid.");
 
             if (post.Description.ToUpper().Contains("SEXO"))
                 throw new Exception("Post description is not allowed.");
 
-            await _postRepository.InsertPost(post);
+            await _unitOfWork.PostRepository.Insert(post);
         }
 
-        public Task<bool> UpdatePost(Post post)
+        public Task UpdatePost(Post post)
         {
-            return _postRepository.UpdatePost(post);
+            return _unitOfWork.PostRepository.Update(post);
         }
     }
 }
