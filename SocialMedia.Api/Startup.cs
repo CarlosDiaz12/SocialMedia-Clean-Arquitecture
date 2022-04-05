@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Core.Services;
 using SocialMedia.Infrastrucuture.Data;
 using SocialMedia.Infrastrucuture.Data.Configuration;
 using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
@@ -51,9 +52,10 @@ namespace SocialMedia.Api
             // db context
             services.AddDbContext<SocialMediaContext>();
 
-            // repositories
+            // repositories and services
             services.AddTransient<IPostRepository, PostRepository>();
-
+            services.AddTransient<IPostService, PostService>();
+            services.AddTransient<IUserRepository, UserRepository>();
             // Configurar middleware global
             services.AddMvcCore(opts =>
             {
