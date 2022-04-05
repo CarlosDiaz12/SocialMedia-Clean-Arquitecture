@@ -37,7 +37,15 @@ namespace SocialMedia.Core.Services
             if (post.Description.ToUpper().Contains("SEXO"))
                 throw new Exception("Post description is not allowed.");
 
-            var userPosts = _unitOfWork.PostRepository.get
+            var userPosts = await _unitOfWork.PostRepository.GetAll(x => x.UserId == post.UserId);
+            if(userPosts.Count() > 0 && userPosts.Count() < 10)
+            {
+                var lastPost = userPosts.LastOrDefault();
+                if(lastPost != null)
+                {
+                    if()
+                }
+            }
 
             await _unitOfWork.PostRepository.Insert(post);
             await _unitOfWork.SaveChangesAsync();
