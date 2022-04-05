@@ -13,12 +13,6 @@ namespace SocialMedia.Core.Services
         {
             _unitOfWork = unitOfWork;
         }
-
-        public Task DeletePost(int Id)
-        {
-            return _unitOfWork.PostRepository.Delete(Id);
-        }
-
         public Task<Post> GetPostById(int Id)
         {
             return _unitOfWork.PostRepository.GetById(Id);
@@ -27,6 +21,11 @@ namespace SocialMedia.Core.Services
         public Task<IEnumerable<Post>> GetPosts()
         {
             return _unitOfWork.PostRepository.GetAll();
+        }
+        public async Task DeletePost(int Id)
+        {
+            await _unitOfWork.PostRepository.Delete(Id);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task InsertPost(Post post)
@@ -38,12 +37,16 @@ namespace SocialMedia.Core.Services
             if (post.Description.ToUpper().Contains("SEXO"))
                 throw new Exception("Post description is not allowed.");
 
+            var userPosts = _unitOfWork.PostRepository.get
+
             await _unitOfWork.PostRepository.Insert(post);
+            await _unitOfWork.SaveChangesAsync();
         }
 
-        public Task UpdatePost(Post post)
+        public async Task UpdatePost(Post post)
         {
-            return _unitOfWork.PostRepository.Update(post);
+            _unitOfWork.PostRepository.Update(post);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }

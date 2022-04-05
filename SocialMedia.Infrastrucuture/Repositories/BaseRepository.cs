@@ -4,6 +4,8 @@ using SocialMedia.Core.Interfaces;
 using SocialMedia.Infrastrucuture.Data;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,9 +21,14 @@ namespace SocialMedia.Infrastrucuture.Repositories
             _dbSet = _dbContext.Set<TEntity>();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll()
+        public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null)
         {
-            return await _dbSet.ToListAsync();
+            IQueryable<TEntity> result = _dbSet;
+
+            if (filter != null)
+                result = result.Where(filter);
+
+            return await result.ToListAsync();
         }
 
         public async Task<TEntity> GetById(int Id)
@@ -32,22 +39,19 @@ namespace SocialMedia.Infrastrucuture.Repositories
         {
             var entity = await GetById(Id);
             _dbSet.Remove(entity);
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task Insert(TEntity entity)
         {
             await _dbSet.AddAsync(entity);
-            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task Update(TEntity entity)
+        public void Update(TEntity entity)
         {
             if (_dbContext.Entry(entity).State == EntityState.Detached)
                 _dbContext.Attach(entity);
 
             _dbSet.Update(entity);
-            await _dbContext.SaveChangesAsync();
         }
     }
 }
