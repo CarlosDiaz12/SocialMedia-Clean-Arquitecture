@@ -1,6 +1,8 @@
 ﻿using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
+using SocialMedia.Core.QueryFilters;
+using SocialMedia.Core.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,9 +21,20 @@ namespace SocialMedia.Core.Services
             return _unitOfWork.PostRepository.GetById(Id);
         }
 
-        public Task<IEnumerable<Post>> GetPosts()
+        public Task<IEnumerable<Post>> GetPosts(PostQueryFilter query)
         {
-            return _unitOfWork.PostRepository.GetAll();
+            var predicate = PredicateBuilder.True<Post>();
+
+            if (query.UserId.HasValue)
+                predicate = predicate.And(x => x.UserId == query.UserId);
+
+            if (query.Date.HasValue)
+                predicate = predicate.And(x => x.Date.Date == query.Date.Value.Date);
+
+            if (!string.IsNullOrWhiteSpace(query.Description))
+                predicate = predicate.And(x => x.Description.Contains(query.Description));
+
+            return _unitOfWork.PostRepository.GetAll(predicate);
         }
         public async Task DeletePost(int Id)
         {
