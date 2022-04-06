@@ -7,6 +7,7 @@ using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
@@ -23,7 +24,9 @@ namespace SocialMedia.Api.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<IActionResult> GetPosts([FromQuery] PostQueryFilter query)
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<ActionResult<ApiResponse<IEnumerable<PostDto>>>> GetPosts([FromQuery] PostQueryFilter query)
         {
             var posts = await _postService.GetPosts(query);
             var postsDto = _mapper.Map<IEnumerable<PostDto>>(posts);
@@ -32,7 +35,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpGet, Route("{postId}")]
-        public async Task<IActionResult> GetPostById(int postId)
+        public async Task<ActionResult<ApiResponse<PostDto>>> GetPostById(int postId)
         {
             var post = await _postService.GetPostById(postId);
             var postDto = _mapper.Map<PostDto>(post);
@@ -43,7 +46,7 @@ namespace SocialMedia.Api.Controllers
             return Ok(response);
         }
         [HttpPost]
-        public async Task<IActionResult> InsertPost(PostDto _object)
+        public async Task<ActionResult<ApiResponse<PostDto>>> InsertPost(PostDto _object)
         {
             var newPost = _mapper.Map<Post>(_object);
             await _postService.InsertPost(newPost);
@@ -53,7 +56,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpPut("{postId}")]
-        public async Task<IActionResult> UpdatePost(int postId, [FromBody] PostDto _object)
+        public async Task<ActionResult<ApiResponse<bool>>> UpdatePost(int postId, [FromBody] PostDto _object)
         {
             var updatePost = _mapper.Map<Post>(_object);
             updatePost.Id = postId;
@@ -63,7 +66,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpDelete("{postId}")]
-        public async Task<IActionResult> DeletePost(int postId)
+        public async Task<ActionResult<ApiResponse<bool>>> DeletePost(int postId)
         {
             await _postService.DeletePost(postId);
             var response = new ApiResponse<bool>(true);
