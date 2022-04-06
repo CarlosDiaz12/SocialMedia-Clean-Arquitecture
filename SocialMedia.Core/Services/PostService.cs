@@ -1,4 +1,5 @@
-﻿using SocialMedia.Core.Entities;
+﻿using SocialMedia.Core.CustomEntities;
+using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
@@ -21,7 +22,7 @@ namespace SocialMedia.Core.Services
             return _unitOfWork.PostRepository.GetById(Id);
         }
 
-        public Task<IEnumerable<Post>> GetPosts(PostQueryFilter query)
+        public async Task<PagedResult<Post>> GetPosts(PostQueryFilter query)
         {
             var predicate = PredicateBuilder.True<Post>();
 
@@ -34,7 +35,8 @@ namespace SocialMedia.Core.Services
             if (!string.IsNullOrWhiteSpace(query.Description))
                 predicate = predicate.And(x => x.Description.Contains(query.Description));
 
-            return _unitOfWork.PostRepository.GetAll(predicate);
+            var posts = await _unitOfWork.PostRepository.GetAll(predicate);
+            return Pagination<Post>.GetPagedResultForQuery(posts, query.PageNumber, query.PageSize, true);
         }
         public async Task DeletePost(int Id)
         {

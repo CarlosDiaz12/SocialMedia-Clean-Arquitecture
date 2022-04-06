@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SocialMedia.Api.Response;
+using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
+using SocialMedia.Core.Util;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -23,19 +25,20 @@ namespace SocialMedia.Api.Controllers
             _postService = postRepository;
             _mapper = mapper;
         }
+
         [HttpGet]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public async Task<ActionResult<ApiResponse<IEnumerable<PostDto>>>> GetPosts([FromQuery] PostQueryFilter query)
+        public async Task<IActionResult> GetPosts([FromQuery] PostQueryFilter query)
         {
             var posts = await _postService.GetPosts(query);
-            var postsDto = _mapper.Map<IEnumerable<PostDto>>(posts);
-            var response = new ApiResponse<IEnumerable<PostDto>>(postsDto);
+            var postsDto = _mapper.Map<PagedResult<PostDto>>(posts);
+            var response = new ApiResponse<PagedResult<PostDto>>(postsDto);
             return Ok(response);
         }
 
         [HttpGet, Route("{postId}")]
-        public async Task<ActionResult<ApiResponse<PostDto>>> GetPostById(int postId)
+        public async Task<IActionResult> GetPostById(int postId)
         {
             var post = await _postService.GetPostById(postId);
             var postDto = _mapper.Map<PostDto>(post);
@@ -46,7 +49,7 @@ namespace SocialMedia.Api.Controllers
             return Ok(response);
         }
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<PostDto>>> InsertPost(PostDto _object)
+        public async Task<IActionResult> InsertPost(PostDto _object)
         {
             var newPost = _mapper.Map<Post>(_object);
             await _postService.InsertPost(newPost);
@@ -56,7 +59,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpPut("{postId}")]
-        public async Task<ActionResult<ApiResponse<bool>>> UpdatePost(int postId, [FromBody] PostDto _object)
+        public async Task<IActionResult> UpdatePost(int postId, [FromBody] PostDto _object)
         {
             var updatePost = _mapper.Map<Post>(_object);
             updatePost.Id = postId;
@@ -66,7 +69,7 @@ namespace SocialMedia.Api.Controllers
         }
 
         [HttpDelete("{postId}")]
-        public async Task<ActionResult<ApiResponse<bool>>> DeletePost(int postId)
+        public async Task<IActionResult> DeletePost(int postId)
         {
             await _postService.DeletePost(postId);
             var response = new ApiResponse<bool>(true);

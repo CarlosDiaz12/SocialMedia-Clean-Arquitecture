@@ -21,12 +21,20 @@ namespace SocialMedia.Infrastrucuture.Repositories
             _dbSet = _dbContext.Set<TEntity>();
         }
 
-        public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null)
+        public async Task<IEnumerable<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null,
+             int? take = null, int? skip = null)
         {
             IQueryable<TEntity> result = _dbSet;
 
             if (filter != null)
                 result = result.Where(filter);
+
+            if (take.HasValue && skip.HasValue)
+            {
+                var pageIndex = skip.Value;
+                var pageSize = take.Value;
+                result = result.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            }
 
             return await result.ToListAsync();
         }
