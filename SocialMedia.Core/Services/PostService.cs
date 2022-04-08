@@ -1,4 +1,5 @@
-﻿using SocialMedia.Core.CustomEntities;
+﻿using Microsoft.Extensions.Options;
+using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Entities;
 using SocialMedia.Core.Exceptions;
 using SocialMedia.Core.Interfaces;
@@ -13,9 +14,11 @@ namespace SocialMedia.Core.Services
     public class PostService : IPostService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public PostService(IUnitOfWork unitOfWork)
+        private readonly PaginationOptions _paginationOptions;
+        public PostService(IUnitOfWork unitOfWork, IOptions<PaginationOptions> paginationOptions)
         {
             _unitOfWork = unitOfWork;
+            _paginationOptions = paginationOptions.Value;
         }
         public Task<Post> GetPostById(int Id)
         {
@@ -24,6 +27,9 @@ namespace SocialMedia.Core.Services
 
         public async Task<PagedResult<Post>> GetPosts(PostQueryFilter query)
         {
+            query.PageNumber = (query.PageNumber == 0 || query.PageNumber < 0) ? _paginationOptions.DefaultPageNumber : query.PageNumber;
+            query.PageSize = (query.PageSize == 0 || query.PageSize < 0) ? _paginationOptions.DefaultPageSize : query.PageSize;
+
             var predicate = PredicateBuilder.True<Post>();
 
             if (query.UserId.HasValue)

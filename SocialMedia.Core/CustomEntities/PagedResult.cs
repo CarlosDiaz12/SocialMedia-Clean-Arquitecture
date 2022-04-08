@@ -11,5 +11,7 @@ namespace SocialMedia.Core.CustomEntities
         public int PageCount { get; set; }
         public int PageSize { get; set; }
         public int RowCount { get; set; }
+        public bool HasNextPage => CurrentPage < PageCount;
+        public bool HasPreviousPage => CurrentPage > 1;
     }
 }

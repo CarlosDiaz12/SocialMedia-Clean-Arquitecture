@@ -7,6 +7,7 @@ using SocialMedia.Core.Entities;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.QueryFilters;
 using SocialMedia.Core.Util;
+using SocialMedia.Infrastrucuture.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -20,20 +21,29 @@ namespace SocialMedia.Api.Controllers
     {
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
-        public PostController(IPostService postRepository, IMapper mapper)
+        private readonly IUriService _uriService;
+        public PostController(
+            IPostService postRepository,
+            IMapper mapper,
+            IUriService uriService)
         {
             _postService = postRepository;
             _mapper = mapper;
+            _uriService = uriService;
         }
 
-        [HttpGet]
+        [HttpGet(Name = nameof(GetPosts))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> GetPosts([FromQuery] PostQueryFilter query)
         {
             var posts = await _postService.GetPosts(query);
             var postsDto = _mapper.Map<PagedResult<PostDto>>(posts);
-            var response = new ApiResponse<PagedResult<PostDto>>(postsDto);
+            var metadata = _mapper.Map<Metadata>(postsDto);
+            metadata.NextPageUrl = _uriService.GetPostPaginationUri(query, Url.RouteUrl(nameof(GetPosts))).ToString();
+            metadata.PreviousPageUrl = _uriService.GetPostPaginationUri(query, Url.RouteUrl(nameof(GetPosts))).ToString();
+
+            var response = new ApiResponse<IEnumerable<PostDto>>(postsDto.Results, metadata);
             return Ok(response);
         }
 
