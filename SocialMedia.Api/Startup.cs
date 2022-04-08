@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using SocialMedia.Core.CustomEntities;
 using SocialMedia.Core.Interfaces;
@@ -18,6 +19,8 @@ using SocialMedia.Infrastrucuture.Interfaces;
 using SocialMedia.Infrastrucuture.Repositories;
 using SocialMedia.Infrastrucuture.Services;
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace SocialMedia.Api
 {
@@ -80,6 +83,22 @@ namespace SocialMedia.Api
                 return new UriService(absoluteUri);
             });
 
+
+            // swaggger docs
+            services.AddSwaggerGen(opts =>
+            {
+                opts.SwaggerDoc("v1", new OpenApiInfo 
+                { 
+                    Title = "Social Media API", 
+                    Version = "v1", 
+                    Contact = new OpenApiContact { Name = "Carlos Diaz"} 
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                opts.IncludeXmlComments(xmlPath);
+            });
+
             // Configurar middleware global
             services.AddMvcCore(opts =>
             {
@@ -102,6 +121,13 @@ namespace SocialMedia.Api
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options => 
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media API V1");
+                options.RoutePrefix = string.Empty;
+            });
 
             app.UseRouting();
 
