@@ -2,22 +2,14 @@ using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using SocialMedia.Core.CustomEntities;
-using SocialMedia.Core.Interfaces;
-using SocialMedia.Core.Services;
-using SocialMedia.Infrastrucuture.Data;
-using SocialMedia.Infrastrucuture.Data.Configuration;
-using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
+using SocialMedia.Infrastrucuture;
 using SocialMedia.Infrastrucuture.Filters;
-using SocialMedia.Infrastrucuture.Interfaces;
-using SocialMedia.Infrastrucuture.Repositories;
-using SocialMedia.Infrastrucuture.Services;
 using System;
 using System.IO;
 using System.Reflection;
@@ -36,9 +28,6 @@ namespace SocialMedia.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // configure AutoMapper to find automapper profiles
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
             // configure json reference loop
             services.AddControllers()
                 .AddNewtonsoftJson(x => {
@@ -50,39 +39,10 @@ namespace SocialMedia.Api
                     // opts.SuppressModelStateInvalidFilter = true;
                 });
 
-            // DEPENDENCIAS
-
-            // database mappers
-            services.AddTransient<IUserConfiguration, UserConfiguration>();
-            services.AddTransient<ICommentConfiguration, CommentConfiguration>();
-            services.AddTransient<IPostConfiguration, PostConfiguration>();
-
             // register config
 
             services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
-
-            // db context
-            services.AddDbContext<SocialMediaContext>();
-
-            /* repositories and services */
-
-            // post
-            services.AddTransient<IPostService, PostService>();
-            services.AddTransient<IPostRepository, PostRepository>();
-
-            // generic
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            // uri service
-            services.AddSingleton<IUriService>(provider => 
-            {
-                var accesor = provider.GetRequiredService<IHttpContextAccessor>();
-                var request = accesor.HttpContext.Request;
-                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
-                return new UriService(absoluteUri);
-            });
-
+            services.AddInfrastructureServices();
 
             // swaggger docs
             services.AddSwaggerGen(opts =>
