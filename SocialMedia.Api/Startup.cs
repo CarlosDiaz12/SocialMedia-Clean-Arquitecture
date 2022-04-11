@@ -1,26 +1,21 @@
 using AutoMapper;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using SocialMedia.Core.CustomEntities;
-using SocialMedia.Core.Interfaces;
-using SocialMedia.Core.Services;
-using SocialMedia.Infrastrucuture.Data;
-using SocialMedia.Infrastrucuture.Data.Configuration;
-using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
+using SocialMedia.Infrastrucuture;
 using SocialMedia.Infrastrucuture.Filters;
-using SocialMedia.Infrastrucuture.Interfaces;
-using SocialMedia.Infrastrucuture.Repositories;
-using SocialMedia.Infrastrucuture.Services;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Text;
 
 namespace SocialMedia.Api
 {
@@ -36,68 +31,59 @@ namespace SocialMedia.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // configure AutoMapper to find automapper profiles
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
             // configure json reference loop
             services.AddControllers()
-                .AddNewtonsoftJson(x => {
+                .AddNewtonsoftJson(x =>
+                {
                     x.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     // x.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 })
-                .ConfigureApiBehaviorOptions(opts => {
+                .ConfigureApiBehaviorOptions(opts =>
+                {
                     // configurar opciones de API Attribute / remover validacion de modelo antes de entrar al action
                     // opts.SuppressModelStateInvalidFilter = true;
                 });
 
-            // DEPENDENCIAS
-
-            // database mappers
-            services.AddTransient<IUserConfiguration, UserConfiguration>();
-            services.AddTransient<ICommentConfiguration, CommentConfiguration>();
-            services.AddTransient<IPostConfiguration, PostConfiguration>();
-
             // register config
 
             services.Configure<PaginationOptions>(Configuration.GetSection("Pagination"));
-
-            // db context
-            services.AddDbContext<SocialMediaContext>();
-
-            /* repositories and services */
-
-            // post
-            services.AddTransient<IPostService, PostService>();
-            services.AddTransient<IPostRepository, PostRepository>();
-
-            // generic
-            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
-            services.AddTransient<IUnitOfWork, UnitOfWork>();
-
-            // uri service
-            services.AddSingleton<IUriService>(provider => 
-            {
-                var accesor = provider.GetRequiredService<IHttpContextAccessor>();
-                var request = accesor.HttpContext.Request;
-                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
-                return new UriService(absoluteUri);
-            });
-
+            services.AddInfrastructureServices();
 
             // swaggger docs
             services.AddSwaggerGen(opts =>
             {
-                opts.SwaggerDoc("v1", new OpenApiInfo 
-                { 
-                    Title = "Social Media API", 
-                    Version = "v1", 
-                    Contact = new OpenApiContact { Name = "Carlos Diaz"} 
+                opts.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Social Media API",
+                    Version = "v1",
+                    Contact = new OpenApiContact { Name = "Carlos Diaz" }
                 });
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 opts.IncludeXmlComments(xmlPath);
             });
+
+            // jwt authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+             .AddJwtBearer(options =>
+             {
+                 options.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuer = true,
+                     ValidateAudience = true,
+                     ValidateLifetime = true,
+                     ValidateIssuerSigningKey = true,
+                     ValidIssuer = Configuration["Authentication:Issuer"],
+                     ValidAudience = Configuration["Authentication:Audience"],
+                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]))
+                 };
+             });
+
 
             // Configurar middleware global
             services.AddMvcCore(opts =>
@@ -106,7 +92,8 @@ namespace SocialMedia.Api
                 opts.Filters.Add(typeof(GlobalExceptionFilter));
 
             })
-                .AddFluentValidation( opts => {
+                .AddFluentValidation(opts =>
+                {
                     // REGISTRAR LOS ASSEMBLIES DONDE SE ENCUENTRAN LOS VALIDATORS de FLUENT VALIDATION
                     opts.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
                 });
@@ -123,7 +110,7 @@ namespace SocialMedia.Api
             app.UseHttpsRedirection();
 
             app.UseSwagger();
-            app.UseSwaggerUI(options => 
+            app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Media API V1");
                 options.RoutePrefix = string.Empty;
@@ -131,7 +118,9 @@ namespace SocialMedia.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
