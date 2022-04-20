@@ -1,25 +1,26 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SocialMedia.Api.Response;
 using SocialMedia.Core.DTOs;
 using SocialMedia.Core.Entities;
+using SocialMedia.Core.Enum;
 using SocialMedia.Core.Interfaces;
 using System.Threading.Tasks;
 
 namespace SocialMedia.Api.Controllers
 {
+    [Authorize(Roles = nameof(RoleType.ADMIN))]
     [Route("api/[controller]")]
     [Produces("application/json")]
     [ApiController]
     public class SecurityController : ControllerBase
     {
-        private readonly IConfiguration Configuration;
         private readonly ISecurityService _securityService;
         private readonly IMapper _mapper;
-        public SecurityController(IConfiguration configuration, ISecurityService securityService, IMapper mapper)
+        public SecurityController(ISecurityService securityService, IMapper mapper)
         {
-            Configuration = configuration;
             _securityService = securityService;
             _mapper = mapper;
         }
