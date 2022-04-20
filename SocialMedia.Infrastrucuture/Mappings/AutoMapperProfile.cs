@@ -18,6 +18,9 @@ namespace SocialMedia.Infrastrucuture.Mappings
             CreateMap<PagedResult<PostDto>, PagedResult<Post>>();
 
             CreateMap<PagedResult<PostDto>, Metadata>();
+
+            CreateMap<Security, SecurityDto>()
+                .ReverseMap();
         }
     }
 }

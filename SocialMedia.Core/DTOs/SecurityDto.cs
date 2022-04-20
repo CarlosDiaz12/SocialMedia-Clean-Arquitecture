@@ -1,12 +1,12 @@
 ﻿using SocialMedia.Core.Enum;
 
-namespace SocialMedia.Core.Entities
+namespace SocialMedia.Core.DTOs
 {
-    public class Security: BaseEntity
+    public class SecurityDto
     {
         public string User { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public RoleType Role { get; set; }
+        public RoleType? Role { get; set; }
     }
 }

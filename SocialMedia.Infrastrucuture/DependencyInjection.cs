@@ -29,6 +29,10 @@ namespace SocialMedia.Infrastrucuture
             services.AddTransient<IPostService, PostService>();
             services.AddTransient<IPostRepository, PostRepository>();
 
+            // security
+            services.AddTransient<ISecurityService, SecurityService>();
+            services.AddTransient<ISecurityRepository, SecurityRepository>();
+
             // generic
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
