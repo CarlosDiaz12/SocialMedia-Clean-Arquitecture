@@ -15,18 +15,22 @@ namespace SocialMedia.Infrastrucuture.Repositories
             SocialMediaContext context,
             IPostRepository postRepository,
             IRepository<User> userRepository,
-            IRepository<Comment> commentRepository)
+            IRepository<Comment> commentRepository,
+            ISecurityRepository securityRepository)
         {
             _context = context;
             PostRepository = postRepository;
             UserRepository = userRepository;
             CommentRepository = commentRepository;
+            SecurityRepository = securityRepository;
         }
         public IPostRepository PostRepository { get; }
 
         public IRepository<User> UserRepository { get; }
 
         public IRepository<Comment> CommentRepository { get; }
+
+        public ISecurityRepository SecurityRepository { get; }
 
         public void Dispose()
         {

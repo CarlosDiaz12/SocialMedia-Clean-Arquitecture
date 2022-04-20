@@ -4,8 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using SocialMedia.Core.Interfaces;
 using SocialMedia.Core.Services;
 using SocialMedia.Infrastrucuture.Data;
-using SocialMedia.Infrastrucuture.Data.Configuration;
-using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
 using SocialMedia.Infrastrucuture.Interfaces;
 using SocialMedia.Infrastrucuture.Repositories;
 using SocialMedia.Infrastrucuture.Services;
@@ -21,12 +19,6 @@ namespace SocialMedia.Infrastrucuture
 
             // configure AutoMapper to find automapper profiles
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-            // database mappers
-            services.AddTransient<IUserConfiguration, UserConfiguration>();
-            services.AddTransient<ICommentConfiguration, CommentConfiguration>();
-            services.AddTransient<IPostConfiguration, PostConfiguration>();
-
 
             // db context
             services.AddDbContext<SocialMediaContext>();

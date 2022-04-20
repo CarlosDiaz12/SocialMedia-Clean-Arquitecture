@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SocialMedia.Core.Entities;
-using SocialMedia.Infrastrucuture.Data.Configuration.Abstract;
 
 namespace SocialMedia.Infrastrucuture.Data.Configuration
 {
-    public class UserConfiguration : IUserConfiguration
+    public class UserConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
