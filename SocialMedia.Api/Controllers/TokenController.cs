@@ -67,7 +67,7 @@ namespace SocialMedia.Api.Controllers
                 Configuration["Authentication:Audience"], 
                 claims,
                 DateTime.Now,
-                DateTime.UtcNow.AddMinutes(2)
+                DateTime.UtcNow.AddMinutes(10)
                 );
 
             // generate token
